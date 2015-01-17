@@ -15,9 +15,9 @@ import org.junit.Test;
  * @author <a href="http://oss.lehmann.cx/">Alexander Lehmann</a>
  *
  */
-public class MailDummyUnit extends VertxTestBase {
+public class MailDummyUnitTest extends VertxTestBase {
 
-  private static final Logger log = LoggerFactory.getLogger(MailDummyUnit.class);
+  private static final Logger log = LoggerFactory.getLogger(MailDummyUnitTest.class);
 
   @Test
   public void mailTest() throws InterruptedException {
