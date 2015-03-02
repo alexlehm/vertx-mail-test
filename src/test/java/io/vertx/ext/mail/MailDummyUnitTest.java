@@ -1,61 +1,71 @@
 package io.vertx.ext.mail;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.impl.LoggerFactory;
 import io.vertx.ext.unit.Async;
-import io.vertx.ext.unit.Unit;
-import io.vertx.test.core.VertxTestBase;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /*
- * smtp client test using vertx unit poc
+ * smtp client test using vertx unit
  */
 /**
  * @author <a href="http://oss.lehmann.cx/">Alexander Lehmann</a>
  *
  */
-public class MailDummyUnitTest extends VertxTestBase {
+@RunWith(VertxUnitRunner.class)
+public class MailDummyUnitTest {
 
   private static final Logger log = LoggerFactory.getLogger(MailDummyUnitTest.class);
 
   @Test
-  public void mailTest() throws InterruptedException {
-    Unit.test("mail test", test -> {
-      log.info("starting");
+  public void testMail(TestContext context) {
+    log.info("starting");
 
-      Async async = test.async();
+    Vertx vertx = context.vertx();
+    Async async = context.async();
 
-      MailConfig mailConfig = new MailConfig("localhost", 1587);
+    MailConfig mailConfig = new MailConfig("localhost", 1587);
 
-      MailService mailService = MailService.create(vertx, mailConfig);
+    MailService mailService = MailService.create(vertx, mailConfig);
 
-      MailMessage email=new MailMessage()
+    MailMessage email = new MailMessage()
       .setFrom("user@example.com")
       .setBounceAddress("sender@example.com")
       .setTo("user@example.net")
       .setSubject("Test email")
       .setText("this is a message");
 
-      mailService.sendMail(email, result -> {
-        log.info("mail finished");
-        if (result.succeeded()) {
-          log.info(result.result().toString());
-          async.complete();
-        } else {
-          log.warn("got exception", result.cause());
-          test.fail(result.cause().toString());
-        }
-      });
-    })
-    .before(test -> {
-      smtpServer = new TestSmtpServer(vertx, v -> test.async().complete());
-    })
-    .after(v -> {
-      smtpServer.stop();
-    })
-    .runner().run();
-    Thread.sleep(10000);
+    mailService.sendMail(email, result -> {
+      log.info("mail finished");
+      if (result.succeeded()) {
+        log.info(result.result().toString());
+        async.complete();
+      } else {
+        log.warn("got exception", result.cause());
+        context.fail(result.cause().toString());
+      }
+    });
+  }
+
+  @Before
+  public void before(TestContext context) {
+    log.info("starting smtp server");
+    Vertx vertx = context.vertx();
+    Async async = context.async();
+    smtpServer = new TestSmtpServer(vertx, v -> async.complete());
+  }
+
+  @After
+  public void after(TestContext context) {
+    log.info("stopping smtp server");
+    smtpServer.stop();
   }
 
   private TestSmtpServer smtpServer;
