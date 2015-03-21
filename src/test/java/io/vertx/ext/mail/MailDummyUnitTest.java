@@ -24,11 +24,12 @@ public class MailDummyUnitTest {
 
   private static final Logger log = LoggerFactory.getLogger(MailDummyUnitTest.class);
 
+  Vertx vertx = Vertx.vertx();
+
   @Test
   public void testMail(TestContext context) {
     log.info("starting");
 
-    Vertx vertx = context.vertx();
     Async async = context.async();
 
     MailConfig mailConfig = new MailConfig("localhost", 1587);
@@ -57,7 +58,6 @@ public class MailDummyUnitTest {
   @Before
   public void before(TestContext context) {
     log.info("starting smtp server");
-    Vertx vertx = context.vertx();
     Async async = context.async();
     smtpServer = new TestSmtpServer(vertx, v -> async.complete());
   }

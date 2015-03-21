@@ -42,7 +42,7 @@
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-mail</artifactId>
+      <artifactId>vertx-mail-service</artifactId>
       <version>3.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
